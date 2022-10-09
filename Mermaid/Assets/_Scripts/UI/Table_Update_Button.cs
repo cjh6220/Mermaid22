@@ -8,6 +8,8 @@ public class Table_Update_Button : UIBaseButton
     {
         base.OnClickImpl();
 
-        SendMessage(MessageID.OnClick_Update_Table);
+#if UNITY_EDITOR
+        SendMessage(MessageID.OnClick_Table_To_Json);
+#endif
     }
 }

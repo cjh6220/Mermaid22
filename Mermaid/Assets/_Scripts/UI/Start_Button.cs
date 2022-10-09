@@ -8,6 +8,7 @@ public class Start_Button : UIBaseButton
     {
         base.OnClickImpl();
 
-        SendMessage(MessageID.OnClick_Start);
+        //SendMessage(MessageID.OnClick_Start);
+        SendMessage(MessageID.Call_UI_Push_Popup, String_UIName.Popup_Product);
     }
 }

@@ -8,6 +8,6 @@ public class Exit_Program : UIBaseButton
     {
         base.OnClickImpl();
 
-        Application.Quit();
+        SendMessage(MessageID.Call_UI_Pop);
     }
 }

@@ -30,7 +30,7 @@ public class Option_Item : UIBaseButton
                     if (isEmpty) return;
                     if (info.idx == Table.idx)
                     {
-                        BG.color = Color.blue;
+                        BG.color = new Color(0.5322179f, 0.5322179f, 0.9811321f);
                     }
                     else
                     {
@@ -41,6 +41,12 @@ public class Option_Item : UIBaseButton
             case MessageID.OnClick_Select:
                 {
                     if (isEmpty) return;
+
+                    var info = data as Table_Gift;
+                    if(info.idx == Table.idx)
+                    {
+                        ChangeProductCount(-1);
+                    }
                     BG.color = Color.white;
                 }
                 break;
@@ -52,6 +58,17 @@ public class Option_Item : UIBaseButton
         Table = table;
         Option_Name.text = table.option + "(" + (table.remain_count / table.person_per_count) + ")";
         if (table.remain_count < table.person_per_count)
+        {
+            BG.color = Color.red;
+            isEmpty = true;
+        }
+    }
+
+    void ChangeProductCount(int count)
+    {
+        Table.remain_count += count * Table.person_per_count;
+        Option_Name.text = Table.option + "(" + (Table.remain_count / Table.person_per_count) + ")";
+        if (Table.remain_count < Table.person_per_count)
         {
             BG.color = Color.red;
             isEmpty = true;

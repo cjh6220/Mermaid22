@@ -41,6 +41,7 @@ public class Add_Button : UIBaseButton
         if (table != null)
         {
             SendMessage(MessageID.OnClick_Select, table);
+            table = null;
         }
     }
 }

@@ -32,7 +32,7 @@ public class Product_Item : UIBaseButton
                     var info = data as Product_List.Product;
                     if (info.Product_Id == Product.Product_Id)
                     {
-                        BG.color = Color.blue;
+                        BG.color = new Color(0.5322179f, 0.5322179f, 0.9811321f);
                     }
                     else
                     {
