@@ -8,6 +8,6 @@ public class Confirm_Button : UIBaseButton
     {
         base.OnClickImpl();
 
-        SendMessage(MessageID.OnClick_Confirm);
+        SendMessage(MessageID.OnClick_Confirm); 
     }
 }
