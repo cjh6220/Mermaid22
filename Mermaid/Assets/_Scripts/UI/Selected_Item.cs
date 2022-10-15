@@ -10,16 +10,16 @@ public class Selected_Item : UIBaseButton
     public Text Count;
     public Text Count_Per_Time;
     public Text Price;
-    Table_Gift Table;
+    Product Table;
 
-    public void SetItem(Table_Gift table)
+    public void SetItem(Product table)
     {
         Table = table;
-        Product_Name.text = table.name;
-        Option_Name.text = table.option;
-        Count.text = table.box_per_count.ToString();
-        Count_Per_Time.text = table.person_per_count.ToString();
-        Price.text = table.price_per_person.ToString();
+        Product_Name.text = table.Product_Name;
+        Option_Name.text = table.Product_Option;
+        Count.text = table.Box_Per_Count.ToString();
+        Count_Per_Time.text = table.Person_Per_Count.ToString();
+        Price.text = table.Price_Per_Person.ToString();
     }
 
     protected override void OnClickImpl()

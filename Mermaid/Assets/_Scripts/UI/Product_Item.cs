@@ -7,7 +7,7 @@ public class Product_Item : UIBaseButton
 {
     public Text Product_Name;
     public Image BG;
-    Product_List.Product Product;
+    Product_List.Temp_Product Product;
     bool isEmpty = false;
 
     protected override void AddMessageListener()
@@ -29,7 +29,7 @@ public class Product_Item : UIBaseButton
         {
             case MessageID.OnClick_Product:
                 {
-                    var info = data as Product_List.Product;
+                    var info = data as Product_List.Temp_Product;
                     if (info.Product_Id == Product.Product_Id)
                     {
                         BG.color = new Color(0.5322179f, 0.5322179f, 0.9811321f);
@@ -56,15 +56,15 @@ public class Product_Item : UIBaseButton
         }
     }
 
-    public void SetItem(Product_List.Product products)
+    public void SetItem(Product_List.Temp_Product products)
     {
         Product = products;
         int productCount = 0;
-        for (int i = 0; i < products.Table.Count; i++)
+        for (int i = 0; i < products.Products.Count; i++)
         {
-            productCount += Mathf.FloorToInt(products.Table[i].remain_count) / products.Table[i].person_per_count;
+            productCount += Mathf.FloorToInt(products.Products[i].Remain_Count) / products.Products[i].Person_Per_Count;
         }
-        Product_Name.text = products.Table[0].name;
+        Product_Name.text = products.Products[0].Product_Name;
 
         if (productCount <= 0)
         {

@@ -23,7 +23,7 @@ public class Option_List : MessageListener
         {
             case MessageID.OnClick_Product:
                 {
-                    var item = data as Product_List.Product;
+                    var item = data as Product_List.Temp_Product;
 
                     CreateItems(item);
                 }
@@ -37,14 +37,14 @@ public class Option_List : MessageListener
         }
     }
 
-    void CreateItems(Product_List.Product products)
+    void CreateItems(Product_List.Temp_Product products)
     {
         RemoveAllItems();
 
-        for (int i = 0; i < products.Table.Count; i++)
+        for (int i = 0; i < products.Products.Count; i++)
         {
             var item = Instantiate(Item, Content);
-            item.GetComponent<Option_Item>().SetItem(products.Table[i]);
+            item.GetComponent<Option_Item>().SetItem(products.Products[i]);
         }
     }
 

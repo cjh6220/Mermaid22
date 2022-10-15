@@ -7,7 +7,7 @@ public class Option_Item : UIBaseButton
 {
     public Text Option_Name;
     public Image BG;
-    Table_Gift Table;
+    Product Table;
     bool isEmpty = false;
     protected override void AddMessageListener()
     {
@@ -28,7 +28,7 @@ public class Option_Item : UIBaseButton
                     var info = data as Table_Gift;
 
                     if (isEmpty) return;
-                    if (info.idx == Table.idx)
+                    if (info.idx == Table.Idx)
                     {
                         BG.color = new Color(0.5322179f, 0.5322179f, 0.9811321f);
                     }
@@ -43,7 +43,7 @@ public class Option_Item : UIBaseButton
                     if (isEmpty) return;
 
                     var info = data as Table_Gift;
-                    if(info.idx == Table.idx)
+                    if(info.idx == Table.Idx)
                     {
                         ChangeProductCount(-1);
                     }
@@ -53,11 +53,11 @@ public class Option_Item : UIBaseButton
         }
     }
 
-    public void SetItem(Table_Gift table)
+    public void SetItem(Product table)
     {
         Table = table;
-        Option_Name.text = table.option + "(" + (table.remain_count / table.person_per_count) + ")";
-        if (table.remain_count < table.person_per_count)
+        Option_Name.text = table.Product_Option + "(" + (table.Remain_Count / table.Person_Per_Count) + ")";
+        if (table.Remain_Count < table.Person_Per_Count)
         {
             BG.color = Color.red;
             isEmpty = true;
@@ -66,9 +66,9 @@ public class Option_Item : UIBaseButton
 
     void ChangeProductCount(int count)
     {
-        Table.remain_count += count * Table.person_per_count;
-        Option_Name.text = Table.option + "(" + (Table.remain_count / Table.person_per_count) + ")";
-        if (Table.remain_count < Table.person_per_count)
+        Table.Remain_Count += count * Table.Person_Per_Count;
+        Option_Name.text = Table.Product_Option + "(" + (Table.Remain_Count / Table.Person_Per_Count) + ")";
+        if (Table.Remain_Count < Table.Person_Per_Count)
         {
             BG.color = Color.red;
             isEmpty = true;

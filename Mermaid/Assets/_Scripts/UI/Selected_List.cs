@@ -9,9 +9,11 @@ public class Selected_List : MessageListener
 {
     public GameObject Item;
     public Transform Content;
-    List<List<Table_Gift>> Persons = new List<List<Table_Gift>>();
-    List<Table_Gift> Gift_List = new List<Table_Gift>();
+    List<List<Product>> Persons = new List<List<Product>>();
+    List<Product> Gift_List = new List<Product>();
     List<GiftData> Total_Gift = new List<GiftData>();
+
+    List<Data_Client> Client_Data = new List<Data_Client>();
 
     public class GiftData
     {
@@ -41,14 +43,14 @@ public class Selected_List : MessageListener
         {
             case MessageID.OnClick_Select:
                 {
-                    var info = data as Table_Gift;
+                    var info = data as Product;
 
                     CreateItem(info);
                 }
                 break;
             case MessageID.OnClick_Remove:
                 {
-                    var info = data as Table_Gift;
+                    var info = data as Product;
 
                     RemoveItem(info);
                 }
@@ -57,7 +59,9 @@ public class Selected_List : MessageListener
                 {
                     if (Gift_List.Count < 1) return;
 
-                    SaveProducts();
+                    var info = data as string;
+
+                    SaveProducts(info);
                 }
                 break;
             case MessageID.OnClick_Reset:
@@ -75,13 +79,13 @@ public class Selected_List : MessageListener
         {
             for (int i = 0; i < Gift_List.Count; i++)
             {
-                totalCash += Mathf.FloorToInt(Gift_List[i].price_per_person);
+                totalCash += Mathf.FloorToInt(Gift_List[i].Price_Per_Person);
             }
         }
         SendMessage(MessageID.Event_Set_TotalCash, totalCash);
     }
 
-    void CreateItem(Table_Gift item)
+    void CreateItem(Product item)
     {
         var newItem = Instantiate(Item, Content);
         newItem.GetComponent<Selected_Item>().SetItem(item);
@@ -89,11 +93,11 @@ public class Selected_List : MessageListener
         CalTotalCash();
     }
 
-    void RemoveItem(Table_Gift item)
+    void RemoveItem(Product item)
     {
         for (int i = 0; i < Gift_List.Count; i++)
         {
-            if (Gift_List[i].idx == item.idx)
+            if (Gift_List[i].Idx == item.Idx)
             {
                 Gift_List.RemoveAt(i);
                 Destroy(Content.GetChild(i).gameObject);
@@ -103,20 +107,23 @@ public class Selected_List : MessageListener
         CalTotalCash();
     }
 
-    void SaveProducts()
+    void SaveProducts(string Name)
     {
-        Persons.Add(new List<Table_Gift>(Gift_List));
+        var newTarget = new Data_Client();
+        newTarget.Client_Name = name;
+        //newTarget.Products = Gift_List;
+        Persons.Add(new List<Product>(Gift_List));
         for (int i = 0; i < Gift_List.Count; i++)
         {
-            var item = Total_Gift.Find(t => t.Idx == Gift_List[i].idx);
+            var item = Total_Gift.Find(t => t.Idx == Gift_List[i].Idx);
             if (item == null)
             {
                 var newItem = new GiftData();
-                newItem.Idx = Gift_List[i].idx;
-                newItem.Name = Gift_List[i].name;
-                newItem.Option = Gift_List[i].option;
-                newItem.Person_Per_Count = Gift_List[i].person_per_count;
-                newItem.Price = Mathf.FloorToInt(Gift_List[i].price_per_person);
+                newItem.Idx = Gift_List[i].Idx;
+                newItem.Name = Gift_List[i].Product_Name;
+                newItem.Option = Gift_List[i].Product_Option;
+                newItem.Person_Per_Count = Gift_List[i].Person_Per_Count;
+                newItem.Price = Mathf.FloorToInt(Gift_List[i].Price_Per_Person);
                 Total_Gift.Add(newItem);
 
                 var target = Table_Manager.Instance.GetTables<Table_Gift>().Find(t => t.idx == newItem.Idx);
@@ -152,10 +159,10 @@ public class Selected_List : MessageListener
             str += (a + 1).ToString() + "번 \n";
             for (int i = 0; i < Persons[a].Count; i++)
             {
-                str += "품명 : " + Persons[a][i].name + "\n";
-                str += "옵션 : " + Persons[a][i].option + "\n";
-                str += "상품 가격 : " + Persons[a][i].price_per_person.ToString("C") + "\n\n";
-                totalCash += Mathf.FloorToInt(Persons[a][i].price_per_person);
+                str += "품명 : " + Persons[a][i].Product_Name + "\n";
+                str += "옵션 : " + Persons[a][i].Product_Option + "\n";
+                str += "상품 가격 : " + Persons[a][i].Price_Per_Person.ToString("C") + "\n\n";
+                totalCash += Mathf.FloorToInt(Persons[a][i].Price_Per_Person);
 
             }
             str += "총 금액 : " + totalCash.ToString("C") + "\n";

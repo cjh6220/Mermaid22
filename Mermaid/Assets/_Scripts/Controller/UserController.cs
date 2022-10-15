@@ -23,6 +23,7 @@ public class UserController : MessageListener
     {
         base.AddMessageListener();
 
+        AddListener(MessageID.Delegate_User_Info);
         AddListener(MessageID.OnClick_Table_To_Json);
     }
 
@@ -32,6 +33,13 @@ public class UserController : MessageListener
         
         switch(msgID)
         {
+            case MessageID.Delegate_User_Info:
+                {
+                    var requestAction = data as System.Action<Data_User>;
+
+                    requestAction(_userData);
+                }
+                break;
             case MessageID.OnClick_Table_To_Json:
                 {
                     TableToJson();

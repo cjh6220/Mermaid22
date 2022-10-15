@@ -6,13 +6,13 @@ public class Product_List : MessageListener
 {
     public GameObject Item;
     public Transform Content;
-    public class Product
+    public class Temp_Product
     {
         public int Product_Id;
-        public List<Table_Gift> Table = new List<Table_Gift>();
+        public List<Product> Products = new List<Product>();
     }
 
-    List<Product> Products = new List<Product>();
+    List<Temp_Product> Products = new List<Temp_Product>();
     protected override void AddMessageListener()
     {
         base.AddMessageListener();
@@ -27,23 +27,43 @@ public class Product_List : MessageListener
     {
         base.AwakeImpl();
 
-        var table = Table_Manager.Instance.GetTables<Table_Gift>();
-        for (int i = 0; i < table.Count; i++)
+        //var table = Table_Manager.Instance.GetTables<Table_Gift>();
+        //for (int i = 0; i < table.Count; i++)
+        //{   
+        //    var item = Products.Find(t => t.Product_Id == table[i].product_idx);
+        //    if (item != null)
+        //    {   
+        //        item.Table.Add(table[i]);
+        //    }
+        //    else
+        //    {
+        //        var newItem = new Product();
+        //        newItem.Product_Id = table[i].product_idx;
+        //        newItem.Table.Add(table[i]);
+        //        Products.Add(newItem);
+        //    }
+        //}
+        
+        SendMessage<Data_User>(MessageID.Delegate_User_Info, (userdata) =>
         {   
-            var item = Products.Find(t => t.Product_Id == table[i].product_idx);
-            if (item != null)
-            {   
-                item.Table.Add(table[i]);
-            }
-            else
+            for(int i = 0; i < userdata.ProductList.Count; i++)
             {
-                var newItem = new Product();
-                newItem.Product_Id = table[i].product_idx;
-                newItem.Table.Add(table[i]);
-                Products.Add(newItem);
+                var item = Products.Find(t => t.Product_Id == userdata.ProductList[i].Product_Idx);
+                if (item != null)
+                {
+                    item.Products.Add(userdata.ProductList[i]);
+                }
+                else
+                {
+                    var newItem = new Temp_Product();
+                    newItem.Product_Id = userdata.ProductList[i].Product_Idx;
+                    newItem.Products.Add(userdata.ProductList[i]);
+                    Products.Add(newItem);
+                }
             }
-        }
+        });
 
+        
         MakeItemList();
     }
 

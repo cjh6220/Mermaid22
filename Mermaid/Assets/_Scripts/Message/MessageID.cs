@@ -15,6 +15,8 @@
     Event_Update_Remain_Product,
     OnClick_Table_To_Json,
 
+    Delegate_User_Info,
+
 
 
 
@@ -66,8 +68,7 @@
 
     Event_Info_UserData,
     Event_InfoUpdate_UserData,
-
-    Delegate_User_Info,
+        
     Call_Battle_CreatePlayer,
     Call_Battle_CreatePlayer_Immediately,
     Call_Battle_CreatePlayerWithInfo,

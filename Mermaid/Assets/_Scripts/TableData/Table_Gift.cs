@@ -23,15 +23,15 @@ public class Table_Gift : Table_Base
         if (false == string.IsNullOrEmpty(data[8]))
             error_count = System.Convert.ToInt32(data[8]);
         if (false == string.IsNullOrEmpty(data[9]))
-            remain_count = System.Convert.ToInt32(data[9]);
+            remain_count = System.Convert.ToSingle(data[9]);
         if (false == string.IsNullOrEmpty(data[10]))
             buy_price = System.Convert.ToInt32(data[10]);
         if (false == string.IsNullOrEmpty(data[11]))
-            total_buy_price = System.Convert.ToInt32(data[11]);
+            total_buy_price = System.Convert.ToSingle(data[11]);
         if (false == string.IsNullOrEmpty(data[12]))
             sell_price = System.Convert.ToInt32(data[12]);
         if (false == string.IsNullOrEmpty(data[13]))
-            total_sell_price = System.Convert.ToInt32(data[13]);
+            total_sell_price = System.Convert.ToSingle(data[13]);
         if (false == string.IsNullOrEmpty(data[14]))
             price_per_person = System.Convert.ToSingle(data[14]);
     }
@@ -45,10 +45,10 @@ public class Table_Gift : Table_Base
     public ObscuredInt person_per_count;
     public ObscuredInt total_person;
     public ObscuredInt error_count;
-    public ObscuredInt remain_count;
+    public ObscuredFloat remain_count;
     public ObscuredInt buy_price;
-    public ObscuredInt total_buy_price;
+    public ObscuredFloat total_buy_price;
     public ObscuredInt sell_price;
-    public ObscuredInt total_sell_price;
+    public ObscuredFloat total_sell_price;
     public ObscuredFloat price_per_person;
 }
