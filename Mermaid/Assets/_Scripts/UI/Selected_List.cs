@@ -33,6 +33,7 @@ public class Selected_List : MessageListener
         AddListener(MessageID.OnClick_Remove);
         AddListener(MessageID.OnClick_Confirm);
         AddListener(MessageID.OnClick_Reset);
+        AddListener(MessageID.OnClick_Update_Selected_Product_Count);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -69,6 +70,13 @@ public class Selected_List : MessageListener
                     RemoveAllItems();
                 }
                 break;
+            case MessageID.OnClick_Update_Selected_Product_Count:
+                {
+                    var info = data as Data_Selected_Product;
+
+                    UpdateItemCount(info);
+                }
+                break;
         }
     }
 
@@ -79,7 +87,7 @@ public class Selected_List : MessageListener
         {
             for (int i = 0; i < Gift_List.Count; i++)
             {
-                totalCash += Mathf.FloorToInt(Gift_List[i].Price_Per_Person);
+                totalCash += Mathf.FloorToInt(Gift_List[i].Price_Per_Person * Gift_List[i].Count);
             }
         }
         SendMessage(MessageID.Event_Set_TotalCash, totalCash);
@@ -87,10 +95,14 @@ public class Selected_List : MessageListener
 
     void CreateItem(Product item)
     {
+        var target = Gift_List.Find(t => t.Idx == item.Idx);
+        if (target != null) return;
+
         var newItem = Instantiate(Item, Content);
         newItem.GetComponent<Selected_Item>().SetItem(item);
-        Gift_List.Add(item);
+        Gift_List.Add((Product)item.Clone());
         CalTotalCash();
+        SendMessage(MessageID.OnClick_Select_Success, item);
     }
 
     void RemoveItem(Product item)
@@ -107,10 +119,20 @@ public class Selected_List : MessageListener
         CalTotalCash();
     }
 
-    void SaveProducts(string Name)
+    void UpdateItemCount(Data_Selected_Product data)
+    {
+        var item = Gift_List.Find(t => t.Idx == data.Product.Idx);
+        if (item != null)
+        {
+            item.Count = data.Product_Count;
+        }
+        CalTotalCash();
+    }
+
+    void SaveProducts(string Name) //수정해야됨
     {
         var newTarget = new Data_Client();
-        newTarget.Client_Name = name;
+        newTarget.Client_Name = Name;
         //newTarget.Products = Gift_List;
         Persons.Add(new List<Product>(Gift_List));
         for (int i = 0; i < Gift_List.Count; i++)
@@ -156,7 +178,7 @@ public class Selected_List : MessageListener
         for (int a = 0; a < Persons.Count; a++)
         {
             int totalCash = 0;
-            str += (a + 1).ToString() + "번 \n";
+            str += (a + 1).ToString() + "번 " + Name + " \n";
             for (int i = 0; i < Persons[a].Count; i++)
             {
                 str += "품명 : " + Persons[a][i].Product_Name + "\n";
@@ -193,8 +215,11 @@ public class Selected_List : MessageListener
         //bf.Serialize(newFile, str);
         //newFile.Close();
 
+        var client = new Data_Client();
+        client.Client_Name = Name;
+        client.Products = Gift_List;
+        SendMessage(MessageID.Event_Save_Product_List, client);
         RemoveAllItems();
-
         SendMessage(MessageID.Event_Update_Remain_Product);
     }
 

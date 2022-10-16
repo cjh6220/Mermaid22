@@ -14,11 +14,15 @@ public class Product_Item : UIBaseButton
     {
         base.AddMessageListener();
 
+        AddListener(MessageID.Event_InfoUpdate_UserData);
         AddListener(MessageID.OnClick_Product);
         AddListener(MessageID.OnClick_Select);
         AddListener(MessageID.OnClick_Confirm);
         AddListener(MessageID.OnClick_Confirm);
         AddListener(MessageID.Event_Update_Remain_Product);
+        AddListener(MessageID.OnClick_Update_Selected_Product_Count);
+        AddListener(MessageID.OnClick_Add_Selected_Product_Count);
+        AddListener(MessageID.OnClick_Reduce_Selected_Product_Count);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -27,6 +31,21 @@ public class Product_Item : UIBaseButton
 
         switch (msgID)
         {
+            case MessageID.Event_InfoUpdate_UserData:
+                {
+                    var info = data as Data_User;
+
+                    var item = new Product_List.Temp_Product();
+                    item.Product_Id = Product.Product_Id;
+
+                    var updateItem = info.ProductList.FindAll(t => t.Product_Idx == Product.Product_Id);
+                    if(updateItem.Count > 0)
+                    {
+                        item.Products = updateItem;
+                        SetItem(item);
+                    }                    
+                }
+                break;
             case MessageID.OnClick_Product:
                 {
                     var info = data as Product_List.Temp_Product;
@@ -41,7 +60,6 @@ public class Product_Item : UIBaseButton
                     }
                 }
                 break;
-            case MessageID.OnClick_Select:
             case MessageID.OnClick_Confirm:
                 {
                     if (isEmpty) return;
@@ -53,12 +71,27 @@ public class Product_Item : UIBaseButton
                     UpdateItem();
                     break;
                 }
+            case MessageID.OnClick_Select:               
+            case MessageID.OnClick_Add_Selected_Product_Count:
+                {
+                    var info = data as Product;
+
+                    TempUpdateItem(info, -1);
+                }
+                break;
+            case MessageID.OnClick_Reduce_Selected_Product_Count:
+                {
+                    var info = data as Product;
+
+                    TempUpdateItem(info, 1);
+                }
+                break;
         }
     }
 
     public void SetItem(Product_List.Temp_Product products)
     {
-        Product = products;
+        Product = (Product_List.Temp_Product)products.Clone();
         int productCount = 0;
         for (int i = 0; i < products.Products.Count; i++)
         {
@@ -71,15 +104,34 @@ public class Product_Item : UIBaseButton
             isEmpty = true;
             BG.color = Color.red;
         }
+    }    
+
+    void TempUpdateItem(Product data, int count)
+    {
+        var target = Product.Products.Find(t => t.Idx == data.Idx);
+        if (target != null)
+        {
+            target.Remain_Count += count * target.Person_Per_Count;
+        }
+        UpdateTextColor();
     }
 
-    public void UpdateItem()
+    void UpdateItem()
     {
-        var table = Table_Manager.Instance.GetTables<Table_Gift>().FindAll(t => t.product_idx == Product.Product_Id);
-        int totalCount = 0;
-        for (int i = 0; i < table.Count; i++)
+        SendMessage<Data_User>(MessageID.Delegate_User_Info, (userdata) =>
         {
-            var count = Mathf.FloorToInt(table[i].remain_count) / table[i].person_per_count;
+            Product.Products = new List<Product>(userdata.ProductList.FindAll(t => t.Product_Idx == Product.Product_Id));
+        });
+
+        UpdateTextColor();
+    }
+
+    void UpdateTextColor()
+    {
+        int totalCount = 0;
+        for (int i = 0; i < Product.Products.Count; i++)
+        {
+            var count = Mathf.FloorToInt(Product.Products[i].Remain_Count) / Product.Products[i].Person_Per_Count;
             totalCount += count;
         }
 
@@ -87,6 +139,11 @@ public class Product_Item : UIBaseButton
         {
             isEmpty = true;
             BG.color = Color.red;
+        }
+        else
+        {
+            isEmpty = false;
+            BG.color = Color.white;
         }
     }
 

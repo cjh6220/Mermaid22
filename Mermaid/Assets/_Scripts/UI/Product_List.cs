@@ -10,17 +10,28 @@ public class Product_List : MessageListener
     {
         public int Product_Id;
         public List<Product> Products = new List<Product>();
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 
     List<Temp_Product> Products = new List<Temp_Product>();
     protected override void AddMessageListener()
     {
         base.AddMessageListener();
+
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
     {
         base.OnMessage(msgID, sender, data);
+
+        switch(msgID)
+        {
+            
+        }
     }
 
     protected override void AwakeImpl()

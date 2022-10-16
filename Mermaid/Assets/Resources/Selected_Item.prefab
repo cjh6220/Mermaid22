@@ -844,12 +844,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f34e45c54b468bd468fe3f904acc0000, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Button: {fileID: 5777099286356951658}
   Product_Name: {fileID: 2961092385446369694}
   Option_Name: {fileID: 2961092385752155577}
   Count: {fileID: 3355878468814382331}
   Count_Per_Time: {fileID: 994423563627670700}
+  Total_Count: {fileID: 7861927508992755441}
   Price: {fileID: 7540609003875912514}
+  Reduce_Btn: {fileID: 7491672449248109454}
+  Add_Btn: {fileID: 3460994364933956320}
+  Remove_Btn: {fileID: 5777099286356951658}
 --- !u!1 &3830519612026288931
 GameObject:
   m_ObjectHideFlags: 0

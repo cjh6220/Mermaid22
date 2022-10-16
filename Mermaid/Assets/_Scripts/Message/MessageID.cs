@@ -5,6 +5,7 @@
     OnClick_Product,
     OnClick_Option,
     OnClick_Select,
+    OnClick_Select_Success,    
     OnClick_Remove,
     Event_Set_TotalCash,
     OnClick_Confirm,
@@ -14,8 +15,13 @@
     OnClick_Start,
     Event_Update_Remain_Product,
     OnClick_Table_To_Json,
+    OnClick_Update_Selected_Product_Count,
+    OnClick_Add_Selected_Product_Count,
+    OnClick_Reduce_Selected_Product_Count,
+    Event_Save_Product_List,
 
     Delegate_User_Info,
+    Event_InfoUpdate_UserData,
 
 
 
@@ -67,7 +73,7 @@
     Call_InputEvent_Unlock,
 
     Event_Info_UserData,
-    Event_InfoUpdate_UserData,
+    
         
     Call_Battle_CreatePlayer,
     Call_Battle_CreatePlayer_Immediately,

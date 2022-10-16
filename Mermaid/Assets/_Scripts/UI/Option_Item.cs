@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class Option_Item : UIBaseButton
 {
     public Text Option_Name;
     public Image BG;
     Product Table;
+    int Remain_Person = 0;
     bool isEmpty = false;
     protected override void AddMessageListener()
     {
@@ -15,6 +17,9 @@ public class Option_Item : UIBaseButton
 
         AddListener(MessageID.OnClick_Option);
         AddListener(MessageID.OnClick_Select);
+        AddListener(MessageID.OnClick_Select_Success);
+        AddListener(MessageID.OnClick_Add_Selected_Product_Count);
+        AddListener(MessageID.OnClick_Reduce_Selected_Product_Count);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -25,10 +30,10 @@ public class Option_Item : UIBaseButton
         {
             case MessageID.OnClick_Option:
                 {
-                    var info = data as Table_Gift;
+                    var info = data as Product;
 
                     if (isEmpty) return;
-                    if (info.idx == Table.Idx)
+                    if (info.Idx == Table.Idx)
                     {
                         BG.color = new Color(0.5322179f, 0.5322179f, 0.9811321f);
                     }
@@ -41,13 +46,27 @@ public class Option_Item : UIBaseButton
             case MessageID.OnClick_Select:
                 {
                     if (isEmpty) return;
-
-                    var info = data as Table_Gift;
-                    if(info.idx == Table.Idx)
+                    
+                    BG.color = Color.white;
+                }
+                break;
+            case MessageID.OnClick_Select_Success:
+            case MessageID.OnClick_Add_Selected_Product_Count:
+                {
+                    var info = data as Product;
+                    if (info.Idx == Table.Idx)
                     {
                         ChangeProductCount(-1);
                     }
-                    BG.color = Color.white;
+                }
+                break;            
+            case MessageID.OnClick_Reduce_Selected_Product_Count:
+                {
+                    var info = data as Product;
+                    if (info.Idx == Table.Idx)
+                    {
+                        ChangeProductCount(1);
+                    }
                 }
                 break;
         }
@@ -55,8 +74,9 @@ public class Option_Item : UIBaseButton
 
     public void SetItem(Product table)
     {
-        Table = table;
-        Option_Name.text = table.Product_Option + "(" + (table.Remain_Count / table.Person_Per_Count) + ")";
+        Table = (Product)table.Clone();
+        Remain_Person = Mathf.FloorToInt(table.Remain_Count / table.Person_Per_Count);
+        Option_Name.text = table.Product_Option + "(" + (Remain_Person) + ")";
         if (table.Remain_Count < table.Person_Per_Count)
         {
             BG.color = Color.red;
@@ -66,12 +86,18 @@ public class Option_Item : UIBaseButton
 
     void ChangeProductCount(int count)
     {
+        //Remain_Person = Mathf.FloorToInt(Table.Remain_Count / Table.Person_Per_Count) - count;
         Table.Remain_Count += count * Table.Person_Per_Count;
         Option_Name.text = Table.Product_Option + "(" + (Table.Remain_Count / Table.Person_Per_Count) + ")";
-        if (Table.Remain_Count < Table.Person_Per_Count)
+        if (Table.Remain_Count / Table.Person_Per_Count <= 0)
         {
             BG.color = Color.red;
             isEmpty = true;
+        }
+        else
+        {
+            BG.color = Color.white;
+            isEmpty = false;
         }
     }
 

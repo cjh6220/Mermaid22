@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Add_Button : UIBaseButton
 {
-    Table_Gift table = null;
+    Product table = null;
     protected override void AddMessageListener()
     {
         base.AddMessageListener();
@@ -21,7 +21,7 @@ public class Add_Button : UIBaseButton
         {
             case MessageID.OnClick_Option:
                 {
-                    var info = data as Table_Gift;
+                    var info = data as Product;
 
                     table = info;
                 }
