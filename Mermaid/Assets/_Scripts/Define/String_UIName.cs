@@ -6,6 +6,7 @@ public class String_UIName
 {
     public const string Popup_Product = "ProductPopup";
     public const string Popup_Setting = "Product_Setting_Popup";
+    public const string Popup_Really_Remove = "Remove_Product_Popup";
     //public const string UILobby = "UILobby";
     public const string UILobby = "Lobby_01";
     public const string UIMydeck = "UIMydeck";

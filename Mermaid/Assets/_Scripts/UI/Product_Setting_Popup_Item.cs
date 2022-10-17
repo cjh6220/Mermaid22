@@ -126,6 +126,7 @@ public class Product_Setting_Popup_Item : MessageListener
 
     void OnClickRemove()
     {
-
+        SendMessage(MessageID.Call_UI_Push_Popup, String_UIName.Popup_Really_Remove);
+        SendMessage(MessageID.Event_Open_Remove_Product_Popup, Group.Product_Idx);
     }
 }

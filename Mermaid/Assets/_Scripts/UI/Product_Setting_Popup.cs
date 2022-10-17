@@ -1,18 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Sirenix.OdinInspector;
 public class Product_Setting_Popup : MessageListener
 {
     public GameObject Item;
-    public Transform Content;
-    List<ProductGroup> ProductGroups = new List<ProductGroup>();
+    public Transform Content;    
+    List<ProductGroup> ProductGroups = new List<ProductGroup>();    
     List<GameObject> GroupItems = new List<GameObject>();
 
     public class ProductGroup
     {
         public int Product_Idx;
         public List<Product> Products = new List<Product>();
+    }
+
+    protected override void AddMessageListener()
+    {
+        base.AddMessageListener();
+
+        AddListener(MessageID.OnClick_Remove_Edit_Button);
+    }
+
+    protected override void OnMessage(MessageID msgID, object sender, object data)
+    {
+        base.OnMessage(msgID, sender, data);
+
+        switch (msgID)
+        {
+            case MessageID.OnClick_Remove_Edit_Button:
+                {
+                    var info = (int)data;
+
+                    var target = ProductGroups.Find(t => t.Product_Idx == info);
+                    if (target != null)
+                    {
+                        var idx = ProductGroups.IndexOf(target);
+                        var item = GroupItems[idx];
+                        GroupItems.RemoveAt(idx);
+                        DestroyImmediate(item);
+                        ProductGroups.RemoveAt(idx);
+                    }
+                }
+                break;
+        }
     }
     protected override void AwakeImpl()
     {

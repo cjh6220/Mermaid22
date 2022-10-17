@@ -21,6 +21,7 @@
     Event_Save_Product_List,
     OnClick_Product_Edit_Button,
     OnClick_Remove_Edit_Button,
+    Event_Open_Remove_Product_Popup,
 
     Delegate_User_Info,
     Event_InfoUpdate_UserData,

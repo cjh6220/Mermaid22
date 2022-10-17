@@ -28,6 +28,7 @@ public class UserController : MessageListener
         AddListener(MessageID.Delegate_User_Info);
         AddListener(MessageID.OnClick_Table_To_Json);
         AddListener(MessageID.Event_Save_Product_List);
+        AddListener(MessageID.OnClick_Remove_Edit_Button);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -53,6 +54,21 @@ public class UserController : MessageListener
                     var info = data as Data_Client;
 
                     UpdateRemainProducts(info);
+                }
+                break;
+            case MessageID.OnClick_Remove_Edit_Button:
+                {
+                    var info = (int)data;
+
+                    var targets = new List<Product>(_userData.ProductList.FindAll(t => t.Product_Idx == info));
+                    if (targets.Count > 0)
+                    {
+                        for (int i = 0; i < targets.Count; i++)
+                        {
+                            _userData.ProductList.Remove(targets[i]);
+                        }
+                    }
+                    SaveJson();
                 }
                 break;
         }
