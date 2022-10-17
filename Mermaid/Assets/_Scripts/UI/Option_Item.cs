@@ -8,8 +8,8 @@ public class Option_Item : UIBaseButton
 {
     public Text Option_Name;
     public Image BG;
-    Product Table;
-    int Remain_Person = 0;
+    Product Table = new Product();
+    int originRemainCount = 0;
     bool isEmpty = false;
     protected override void AddMessageListener()
     {
@@ -20,6 +20,7 @@ public class Option_Item : UIBaseButton
         AddListener(MessageID.OnClick_Select_Success);
         AddListener(MessageID.OnClick_Add_Selected_Product_Count);
         AddListener(MessageID.OnClick_Reduce_Selected_Product_Count);
+        AddListener(MessageID.OnClick_Remove);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -69,13 +70,25 @@ public class Option_Item : UIBaseButton
                     }
                 }
                 break;
+            case MessageID.OnClick_Remove:
+                {
+                    var info = data as Product;
+
+                    if (info.Idx == Table.Idx)
+                    {
+                        Table.Remain_Count = originRemainCount;
+                        ChangeProductCount(0);
+                    }
+                }
+                break;
         }
     }
 
     public void SetItem(Product table)
     {
         Table = (Product)table.Clone();
-        Remain_Person = Mathf.FloorToInt(table.Remain_Count / table.Person_Per_Count);
+        originRemainCount = Mathf.FloorToInt(table.Remain_Count);
+        int Remain_Person = Mathf.FloorToInt(table.Remain_Count / table.Person_Per_Count);
         Option_Name.text = table.Product_Option + "(" + (Remain_Person) + ")";
         if (table.Remain_Count < table.Person_Per_Count)
         {

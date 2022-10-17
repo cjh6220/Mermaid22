@@ -62,13 +62,13 @@ public class Product_List : MessageListener
                 var item = Products.Find(t => t.Product_Id == userdata.ProductList[i].Product_Idx);
                 if (item != null)
                 {
-                    item.Products.Add(userdata.ProductList[i]);
+                    item.Products.Add((Product)userdata.ProductList[i].Clone());
                 }
                 else
                 {
                     var newItem = new Temp_Product();
                     newItem.Product_Id = userdata.ProductList[i].Product_Idx;
-                    newItem.Products.Add(userdata.ProductList[i]);
+                    newItem.Products.Add((Product)userdata.ProductList[i].Clone());
                     Products.Add(newItem);
                 }
             }

@@ -23,6 +23,7 @@ public class Product_Item : UIBaseButton
         AddListener(MessageID.OnClick_Update_Selected_Product_Count);
         AddListener(MessageID.OnClick_Add_Selected_Product_Count);
         AddListener(MessageID.OnClick_Reduce_Selected_Product_Count);
+        AddListener(MessageID.OnClick_Remove);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -41,8 +42,8 @@ public class Product_Item : UIBaseButton
                     var updateItem = info.ProductList.FindAll(t => t.Product_Idx == Product.Product_Id);
                     if(updateItem.Count > 0)
                     {
-                        item.Products = updateItem;
-                        SetItem(item);
+                        item.Products = new List<Product>(updateItem);
+                        SetItem(item, false);
                     }                    
                 }
                 break;
@@ -66,12 +67,12 @@ public class Product_Item : UIBaseButton
                     BG.color = Color.white;
                 }
                 break;
-            case MessageID.Event_Update_Remain_Product:
-                {
-                    UpdateItem();
-                    break;
-                }
-            case MessageID.OnClick_Select:               
+            // case MessageID.Event_Update_Remain_Product:
+            //     {
+            //         UpdateItem();
+            //         break;
+            //     }
+            case MessageID.OnClick_Select_Success:               
             case MessageID.OnClick_Add_Selected_Product_Count:
                 {
                     var info = data as Product;
@@ -86,12 +87,47 @@ public class Product_Item : UIBaseButton
                     TempUpdateItem(info, 1);
                 }
                 break;
+            case MessageID.OnClick_Remove:
+                {
+                    var info = data as Product;
+
+                    if (info.Product_Idx == Product.Product_Id)
+                    {
+                        var item = Product.Products.Find(t => t.Idx == info.Idx);
+                        if (item != null)
+                        {
+                            item.Remain_Count = item.Origin_Remain_Count;
+                            UpdateTextColor();
+                        }
+                    }
+                }
+                break;
         }
     }
 
-    public void SetItem(Product_List.Temp_Product products)
+    public void SetItem(Product_List.Temp_Product products, bool isNew = true)
     {
-        Product = (Product_List.Temp_Product)products.Clone();
+        if (isNew)
+        {
+            Product = (Product_List.Temp_Product)products.Clone();    
+        }
+        else
+        {
+            for (int i = 0; i < products.Products.Count; i++)
+            {
+                var target = Product.Products.Find(t => t.Idx == products.Products[i].Idx);
+                if (target != null)
+                {
+                    target.Remain_Count = products.Products[i].Remain_Count;
+                }
+            }
+        }
+
+        for (int i = 0; i < Product.Products.Count; i++)
+        {
+            Product.Products[i].Origin_Remain_Count = Product.Products[i].Remain_Count;
+        }
+
         int productCount = 0;
         for (int i = 0; i < products.Products.Count; i++)
         {
@@ -118,9 +154,14 @@ public class Product_Item : UIBaseButton
 
     void UpdateItem()
     {
+        Debug.Log("업데이트 아이템");
         SendMessage<Data_User>(MessageID.Delegate_User_Info, (userdata) =>
         {
             Product.Products = new List<Product>(userdata.ProductList.FindAll(t => t.Product_Idx == Product.Product_Id));
+            for (int i = 0; i < Product.Products.Count; i++)
+            {
+                Product.Products[i].Origin_Remain_Count = Product.Products[i].Remain_Count;
+            }
         });
 
         UpdateTextColor();

@@ -6,10 +6,12 @@ using System.IO;
 using System.Text;
 using System;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 //using Photon.Pun;
 
 public class UserController : MessageListener
 {
+    [ShowInInspector]
     Data_User _userData = new Data_User();
 
     protected override void AwakeImpl()

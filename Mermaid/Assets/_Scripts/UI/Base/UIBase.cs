@@ -42,9 +42,9 @@ public class UIBase : MessageListener
             //     break;
             case MessageID.Event_InfoUpdate_UserData:
                 {
-                    _userData = data as Data_User;
+                    // _userData = data as Data_User;
 
-                    UpdateUserData(_userData);
+                    // UpdateUserData(_userData);
                 }
                 break;
         }

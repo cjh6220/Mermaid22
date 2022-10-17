@@ -9,21 +9,7 @@ public class Selected_List : MessageListener
 {
     public GameObject Item;
     public Transform Content;
-    List<List<Product>> Persons = new List<List<Product>>();
     List<Product> Gift_List = new List<Product>();
-    List<GiftData> Total_Gift = new List<GiftData>();
-
-    List<Data_Client> Client_Data = new List<Data_Client>();
-
-    public class GiftData
-    {
-        public int Idx;
-        public string Name;
-        public string Option;
-        public int Price;
-        public int Person_Per_Count;
-        public int Count = 1;
-    }
 
     protected override void AddMessageListener()
     {
@@ -34,6 +20,8 @@ public class Selected_List : MessageListener
         AddListener(MessageID.OnClick_Confirm);
         AddListener(MessageID.OnClick_Reset);
         AddListener(MessageID.OnClick_Update_Selected_Product_Count);
+        // AddListener(MessageID.OnClick_Add_Selected_Product_Count);
+        // AddListener(MessageID.OnClick_Reduce_Selected_Product_Count);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -77,9 +65,25 @@ public class Selected_List : MessageListener
                     UpdateItemCount(info);
                 }
                 break;
+            // case MessageID.OnClick_Add_Selected_Product_Count:
+            // case MessageID.OnClick_Reduce_Selected_Product_Count:
+            //     {
+            //         var info = data as Product;
+
+            //         ChangeProductCount(info);
+            //     }
+            //     break;
         }
     }
 
+    public void ChangeProductCount(Product data, int count)
+    {
+        var target = Gift_List.Find(t => t.Idx == data.Idx);
+        if (target != null)
+        {
+            target.Count = count;
+        }
+    }
     void CalTotalCash()
     {
         int totalCash = 0;
@@ -99,7 +103,7 @@ public class Selected_List : MessageListener
         if (target != null) return;
 
         var newItem = Instantiate(Item, Content);
-        newItem.GetComponent<Selected_Item>().SetItem(item);
+        newItem.GetComponent<Selected_Item>().SetItem(item, this);
         Gift_List.Add((Product)item.Clone());
         CalTotalCash();
         SendMessage(MessageID.OnClick_Select_Success, item);
@@ -129,85 +133,86 @@ public class Selected_List : MessageListener
         CalTotalCash();
     }
 
-    void SaveProducts(string Name) //¼öÁ¤ÇØ¾ßµÊ
+    void SaveProducts(string Name) //ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ßµï¿½
     {
-        var newTarget = new Data_Client();
-        newTarget.Client_Name = Name;
-        //newTarget.Products = Gift_List;
-        Persons.Add(new List<Product>(Gift_List));
-        for (int i = 0; i < Gift_List.Count; i++)
-        {
-            var item = Total_Gift.Find(t => t.Idx == Gift_List[i].Idx);
-            if (item == null)
-            {
-                var newItem = new GiftData();
-                newItem.Idx = Gift_List[i].Idx;
-                newItem.Name = Gift_List[i].Product_Name;
-                newItem.Option = Gift_List[i].Product_Option;
-                newItem.Person_Per_Count = Gift_List[i].Person_Per_Count;
-                newItem.Price = Mathf.FloorToInt(Gift_List[i].Price_Per_Person);
-                Total_Gift.Add(newItem);
+        // var newTarget = new Data_Client();
+        // newTarget.Client_Name = Name;
+        // newTarget.Products = Gift_List;
+        
+        // Persons.Add(new List<Product>(Gift_List));
+        // for (int i = 0; i < Gift_List.Count; i++)
+        // {
+        //     var item = Total_Gift.Find(t => t.Idx == Gift_List[i].Idx);
+        //     if (item == null)
+        //     {
+        //         var newItem = new GiftData();
+        //         newItem.Idx = Gift_List[i].Idx;
+        //         newItem.Name = Gift_List[i].Product_Name;
+        //         newItem.Option = Gift_List[i].Product_Option;
+        //         newItem.Person_Per_Count = Gift_List[i].Person_Per_Count;
+        //         newItem.Price = Mathf.FloorToInt(Gift_List[i].Price_Per_Person);
+        //         Total_Gift.Add(newItem);
 
-                var target = Table_Manager.Instance.GetTables<Table_Gift>().Find(t => t.idx == newItem.Idx);
-                if (target != null)
-                {
-                    target.remain_count -= newItem.Person_Per_Count;
-                }
-                else
-                {
-                    Debug.Log("Target is Null");
-                }
-            }
-            else
-            {
-                item.Count++;
-                var target = Table_Manager.Instance.GetTables<Table_Gift>().Find(t => t.idx == item.Idx);
-                if (target != null)
-                {
-                    target.remain_count -= item.Person_Per_Count;
-                }
-                else
-                {
-                    Debug.Log("Target is Null");
-                }
-                //Table_Manager.Instance.GetTable<Table_Gift>(item.Idx).remain_count -= item.Person_Per_Count;
-            }
-        }
+        //         var target = Table_Manager.Instance.GetTables<Table_Gift>().Find(t => t.idx == newItem.Idx);
+        //         if (target != null)
+        //         {
+        //             target.remain_count -= newItem.Person_Per_Count;
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("Target is Null");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         item.Count++;
+        //         var target = Table_Manager.Instance.GetTables<Table_Gift>().Find(t => t.idx == item.Idx);
+        //         if (target != null)
+        //         {
+        //             target.remain_count -= item.Person_Per_Count;
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("Target is Null");
+        //         }
+        //         //Table_Manager.Instance.GetTable<Table_Gift>(item.Idx).remain_count -= item.Person_Per_Count;
+        //     }
+        // }
 
-        string str = "";
-        for (int a = 0; a < Persons.Count; a++)
-        {
-            int totalCash = 0;
-            str += (a + 1).ToString() + "¹ø " + Name + " \n";
-            for (int i = 0; i < Persons[a].Count; i++)
-            {
-                str += "Ç°¸í : " + Persons[a][i].Product_Name + "\n";
-                str += "¿É¼Ç : " + Persons[a][i].Product_Option + "\n";
-                str += "»óÇ° °¡°Ý : " + Persons[a][i].Price_Per_Person.ToString("C") + "\n\n";
-                totalCash += Mathf.FloorToInt(Persons[a][i].Price_Per_Person);
+        // string str = "";
+        // for (int a = 0; a < Persons.Count; a++)
+        // {
+        //     int totalCash = 0;
+        //     str += (a + 1).ToString() + "ï¿½ï¿½ " + Name + " \n";
+        //     for (int i = 0; i < Persons[a].Count; i++)
+        //     {
+        //         str += "Ç°ï¿½ï¿½ : " + Persons[a][i].Product_Name + "\n";
+        //         str += "ï¿½É¼ï¿½ : " + Persons[a][i].Product_Option + "\n";
+        //         str += "ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ : " + Persons[a][i].Price_Per_Person.ToString("C") + "\n\n";
+        //         totalCash += Mathf.FloorToInt(Persons[a][i].Price_Per_Person);
 
-            }
-            str += "ÃÑ ±Ý¾× : " + totalCash.ToString("C") + "\n";
-            str += "---------------------------------\n";
-        }
+        //     }
+        //     str += "ï¿½ï¿½ ï¿½Ý¾ï¿½ : " + totalCash.ToString("C") + "\n";
+        //     str += "---------------------------------\n";
+        // }
 
-        str += "ÃÑ Á¦°ø ´ý\n";
-        for (int i = 0; i < Total_Gift.Count; i++)
-        {
-            str += (i + 1) + ". Ç°¹ø : " + Total_Gift[i].Idx + " / Ç°¸í : " + Total_Gift[i].Name + " / ¿É¼Ç¸í : " + Total_Gift[i].Option + " / °³¼ö : " + Total_Gift[i].Count + "\n";
-        }
+        // str += "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½\n";
+        // for (int i = 0; i < Total_Gift.Count; i++)
+        // {
+        //     str += (i + 1) + ". Ç°ï¿½ï¿½ : " + Total_Gift[i].Idx + " / Ç°ï¿½ï¿½ : " + Total_Gift[i].Name + " / ï¿½É¼Ç¸ï¿½ : " + Total_Gift[i].Option + " / ï¿½ï¿½ï¿½ï¿½ : " + Total_Gift[i].Count + "\n";
+        // }
 
-        var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Gift.txt");
+        // var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Gift.txt");
 
-        DirectoryInfo directoryInfo = new DirectoryInfo(Path.GetDirectoryName(filePath));
-        if (!directoryInfo.Exists)
-        {
-            directoryInfo.Create();
-        }
-        FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
-        StreamWriter writer = new StreamWriter(fileStream, System.Text.Encoding.Unicode);
-        writer.WriteLine(str);
-        writer.Close();
+        // DirectoryInfo directoryInfo = new DirectoryInfo(Path.GetDirectoryName(filePath));
+        // if (!directoryInfo.Exists)
+        // {
+        //     directoryInfo.Create();
+        // }
+        // FileStream fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
+        // StreamWriter writer = new StreamWriter(fileStream, System.Text.Encoding.Unicode);
+        // writer.WriteLine(str);
+        // writer.Close();
 
 
         //BinaryFormatter bf = new BinaryFormatter();
@@ -217,10 +222,10 @@ public class Selected_List : MessageListener
 
         var client = new Data_Client();
         client.Client_Name = Name;
-        client.Products = Gift_List;
+        client.Products = new List<Product>(Gift_List);
         SendMessage(MessageID.Event_Save_Product_List, client);
         RemoveAllItems();
-        SendMessage(MessageID.Event_Update_Remain_Product);
+        //SendMessage(MessageID.Event_Update_Remain_Product);
     }
 
     void RemoveAllItems()

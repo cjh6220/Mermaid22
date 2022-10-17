@@ -13,7 +13,9 @@ public class Product
     public int Box_Per_Count;
     public int Person_Per_Count;
     public int Total_Person;
+    public int Error_Count;
     public float Remain_Count;
+    public float Origin_Remain_Count;
     public float Price_Per_Person;
     public int Count = 1;
 

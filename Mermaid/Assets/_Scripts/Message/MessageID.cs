@@ -19,6 +19,8 @@
     OnClick_Add_Selected_Product_Count,
     OnClick_Reduce_Selected_Product_Count,
     Event_Save_Product_List,
+    OnClick_Product_Edit_Button,
+    OnClick_Remove_Edit_Button,
 
     Delegate_User_Info,
     Event_InfoUpdate_UserData,

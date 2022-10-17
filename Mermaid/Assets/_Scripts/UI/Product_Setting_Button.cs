@@ -8,6 +8,6 @@ public class Product_Setting_Button : UIBaseButton
     {
         base.OnClickImpl();
 
-        SendMessage(MessageID.Call_UI_Push_Popup, String_UIName.Popup_Product);
+        SendMessage(MessageID.Call_UI_Push_Popup, String_UIName.Popup_Setting);
     }
 }

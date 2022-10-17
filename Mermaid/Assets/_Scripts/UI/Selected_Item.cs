@@ -16,6 +16,7 @@ public class Selected_Item : MessageListener
     public Button Remove_Btn;
     int Product_Count = 1;
     Product Table = new Product();
+    Selected_List parent;
 
     protected override void AddMessageListener()
     {
@@ -26,8 +27,9 @@ public class Selected_Item : MessageListener
         Remove_Btn.onClick.AddListener(Remove_Product);
     }
 
-    public void SetItem(Product table)
+    public void SetItem(Product table, Selected_List selected_List)
     {
+        parent = selected_List;
         Table = (Product)table.Clone();
         Product_Name.text = table.Product_Name;
         Option_Name.text = table.Product_Option;
@@ -59,6 +61,7 @@ public class Selected_Item : MessageListener
         {
             SendMessage(MessageID.OnClick_Reduce_Selected_Product_Count, Table);
         }
+        parent.ChangeProductCount(Table, Product_Count);
         UpdateProductCount();
     }
 
@@ -74,6 +77,7 @@ public class Selected_Item : MessageListener
         {
             SendMessage(MessageID.OnClick_Add_Selected_Product_Count, Table);
         }
+        parent.ChangeProductCount(Table, Product_Count);
         UpdateProductCount();
     }
 
