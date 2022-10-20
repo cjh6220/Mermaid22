@@ -34,9 +34,9 @@ public class Product_Setting_Popup_Item : MessageListener
         {
             case MessageID.OnClick_Product_Edit_Button:
                 {
-                    var info = (int)data;
+                    var info = data as Product_Setting_Popup.ProductGroup;
 
-                    if (info == Group.Product_Idx)
+                    if (info.Product_Idx == Group.Product_Idx)
                     {
                         NameBG.color = new Color(0.8f, 0.8f, 0.8f);
                     }
@@ -121,7 +121,8 @@ public class Product_Setting_Popup_Item : MessageListener
 
     void OnClickBtn()
     {
-        SendMessage(MessageID.OnClick_Product_Edit_Button, Group.Product_Idx);
+        SendMessage(MessageID.Call_UI_Push_Popup, String_UIName.Popup_Edit_Product);
+        SendMessage(MessageID.OnClick_Product_Edit_Button, Group);
     }
 
     void OnClickRemove()

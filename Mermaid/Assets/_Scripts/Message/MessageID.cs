@@ -22,6 +22,11 @@
     OnClick_Product_Edit_Button,
     OnClick_Remove_Edit_Button,
     Event_Open_Remove_Product_Popup,
+    Event_Add_New_Products,
+    Event_Edit_New_Products,
+    Event_Edit_Remove_Products,
+    Event_Remove_Option,
+    Event_Update_Edit_Page,
 
     Delegate_User_Info,
     Event_InfoUpdate_UserData,

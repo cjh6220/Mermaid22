@@ -12,4 +12,6 @@ public class Data_User
 {
     public List<Product> ProductList = new List<Product>();
     public List<Data_Client> ClientList = new List<Data_Client>();
+    public int LastIdx = 0;
+    public int LastProductIdx = 0;
 }

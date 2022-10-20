@@ -20,6 +20,7 @@ public class Product_Setting_Popup : MessageListener
         base.AddMessageListener();
 
         AddListener(MessageID.OnClick_Remove_Edit_Button);
+        AddListener(MessageID.Event_Update_Edit_Page);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -41,6 +42,12 @@ public class Product_Setting_Popup : MessageListener
                         DestroyImmediate(item);
                         ProductGroups.RemoveAt(idx);
                     }
+                }
+                break;
+                case MessageID.Event_Update_Edit_Page:
+                {
+                    RemoveAllItems();
+                    SetProducts();
                 }
                 break;
         }
@@ -85,5 +92,15 @@ public class Product_Setting_Popup : MessageListener
             newItem.gameObject.GetComponent<Product_Setting_Popup_Item>().SetItem(ProductGroups[i]);
             GroupItems.Add(newItem);
         }
+    }
+
+    void RemoveAllItems()
+    {
+        while (Content.childCount > 0)
+        {
+            DestroyImmediate(Content.GetChild(0).gameObject);
+        }
+        ProductGroups.Clear();
+        GroupItems.Clear();
     }
 }

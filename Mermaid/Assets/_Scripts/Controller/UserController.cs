@@ -29,6 +29,9 @@ public class UserController : MessageListener
         AddListener(MessageID.OnClick_Table_To_Json);
         AddListener(MessageID.Event_Save_Product_List);
         AddListener(MessageID.OnClick_Remove_Edit_Button);
+        AddListener(MessageID.Event_Add_New_Products);
+        AddListener(MessageID.Event_Edit_New_Products);
+        AddListener(MessageID.Event_Edit_Remove_Products);
     }
 
     protected override void OnMessage(MessageID msgID, object sender, object data)
@@ -71,6 +74,27 @@ public class UserController : MessageListener
                     SaveJson();
                 }
                 break;
+            case MessageID.Event_Add_New_Products:
+                {
+                    var info = data as List<Product>;
+
+                    AddNewProduct(info);
+                }
+                break;
+            case MessageID.Event_Edit_New_Products:
+                {
+                    var info = data as List<Product>;
+
+                    EditProduct(info);
+                }
+                break;
+            case MessageID.Event_Edit_Remove_Products:
+                {
+                    var info = data as List<int>;
+
+                    RemoveProduct(info);
+                }
+                break;
         }
     }
 
@@ -78,6 +102,8 @@ public class UserController : MessageListener
     {
         var table = Table_Manager.Instance.GetTables<Table_Gift>();
         List<Product> productList = new List<Product>();
+        int lastIdx = 0;
+        int lastGroupIdx = 0;
         for (int i = 0; i < table.Count; i++)
         {
             var item = new Product();
@@ -92,8 +118,14 @@ public class UserController : MessageListener
             item.Remain_Count = table[i].remain_count;
             item.Price_Per_Person = table[i].price_per_person;
 
+            if(item.Idx > lastIdx) lastIdx = item.Idx;
+            if(item.Product_Idx > lastGroupIdx) lastGroupIdx = item.Product_Idx;
+
             productList.Add(item);
         }
+        Debug.Log("LastIdx = " + lastIdx + " / LastProductIdx = " + lastGroupIdx);
+        PlayerPrefs.SetInt("LastIdx", lastIdx);
+        PlayerPrefs.SetInt("LastProductIdx", lastGroupIdx);
 
         var str = JsonConvert.SerializeObject(productList);
         File.WriteAllText(Application.dataPath + "/ProductDB.json", str);
@@ -103,7 +135,6 @@ public class UserController : MessageListener
 
     void LoadJson()
     {
-
         if (File.Exists(Application.dataPath + "/ProductDB.json"))
         {
             var jsonStrRead = File.ReadAllText(Application.dataPath + "/ProductDB.json");
@@ -113,18 +144,23 @@ public class UserController : MessageListener
             {
                 _userData.ProductList = new List<Product>();
             }
+
+            _userData.LastIdx = PlayerPrefs.GetInt("LastIdx");
+            _userData.LastProductIdx = PlayerPrefs.GetInt("LastProductIdx");
         }
         else
         {
             File.WriteAllText(Application.dataPath + "/ProductDB.json", "");
+            PlayerPrefs.SetInt("LastIdx", 0);
+            PlayerPrefs.SetInt("LastProductIdx", 0);
         }
 
         if (File.Exists(Application.dataPath + "/ClientDB.json"))
         {
             var jsonStrRead_Client = File.ReadAllText(Application.dataPath + "/ClientDB.json");
-            var deserializedBarList_Client = JsonConvert.DeserializeObject<List<Data_Client>>(jsonStrRead_Client);            
+            var deserializedBarList_Client = JsonConvert.DeserializeObject<List<Data_Client>>(jsonStrRead_Client);
             _userData.ClientList = deserializedBarList_Client;
-            if(_userData.ClientList == null)
+            if (_userData.ClientList == null)
             {
                 _userData.ClientList = new List<Data_Client>();
             }
@@ -144,6 +180,9 @@ public class UserController : MessageListener
 
         var clientStr = JsonConvert.SerializeObject(_userData.ClientList);
         File.WriteAllText(Application.dataPath + "/ClientDB.json", clientStr);
+
+        PlayerPrefs.SetInt("LastIdx", _userData.LastIdx);
+        PlayerPrefs.SetInt("LastProductIdx", _userData.LastProductIdx);
     }
 
     void UpdateRemainProducts(Data_Client data)
@@ -170,5 +209,67 @@ public class UserController : MessageListener
         SaveJson();
 
         SendMessage(MessageID.Event_InfoUpdate_UserData, _userData);
+    }
+
+    void AddNewProduct(List<Product> data)
+    {
+        var targets = data;
+        int idx = _userData.LastIdx;
+        int productIdx = _userData.LastProductIdx + 1;
+        for (int i = 0; i < targets.Count; i++)
+        {
+            targets[i].Idx = ++idx;
+            targets[i].Product_Idx = productIdx;
+            targets[i].Remain_Count = (targets[i].Box_Count * targets[i].Box_Per_Count) - (targets[i].Total_Person * targets[i].Person_Per_Count) - targets[i].Error_Count;
+            _userData.ProductList.Add(targets[i]);
+        }
+
+        if (targets.Count > 0)
+        {
+            _userData.LastIdx = idx;
+            _userData.LastProductIdx = productIdx;
+        }
+
+        SaveJson();
+        SendMessage(MessageID.Event_Update_Edit_Page);
+    }
+
+    void EditProduct(List<Product> data)
+    {
+        var targets = data;
+        int idx = _userData.LastIdx;
+        int productIdx = _userData.LastProductIdx;
+        for (int i = 0; i < targets.Count; i++)
+        {
+            var item = _userData.ProductList.Find(t => t.Idx == targets[i].Idx);
+            if (item != null)
+            {
+                int existIdx = _userData.ProductList.IndexOf(item);
+                _userData.ProductList[existIdx] = targets[i];
+                _userData.ProductList[existIdx].Remain_Count = (targets[i].Box_Count * targets[i].Box_Per_Count) - (targets[i].Total_Person * targets[i].Person_Per_Count) - targets[i].Error_Count;
+            }
+            else
+            {
+                targets[i].Idx = ++idx;
+                targets[i].Remain_Count = (targets[i].Box_Count * targets[i].Box_Per_Count) - (targets[i].Total_Person * targets[i].Person_Per_Count) - targets[i].Error_Count;
+                _userData.ProductList.Add(targets[i]);
+            }
+        }
+        _userData.LastIdx = idx;
+        _userData.LastProductIdx = productIdx;
+    }
+
+    void RemoveProduct(List<int> data)
+    {
+        for (int i = 0; i < data.Count; i++)
+        {
+            var target = _userData.ProductList.Find(t => t.Idx == data[i]);
+            if (target != null)
+            {
+                _userData.ProductList.Remove(target);
+            }
+        }
+        SaveJson();
+        SendMessage(MessageID.Event_Update_Edit_Page);
     }
 }
