@@ -763,6 +763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Button: {fileID: 0}
+  inputField: {fileID: 5496047942272567932}
   Name: {fileID: 3252673809267245017}
 --- !u!1 &4706501020698941488
 GameObject:

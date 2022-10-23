@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class Confirm_Button : UIBaseButton
 {
+    public InputField inputField;
     public Text Name;
     protected override void OnClickImpl()
     {
         base.OnClickImpl();
 
         SendMessage(MessageID.OnClick_Confirm, Name.text); 
+        inputField.text = "";
     }
 }
