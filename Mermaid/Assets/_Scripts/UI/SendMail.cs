@@ -55,6 +55,7 @@ public class SendMail : UIBaseButton
                 }
 
                 float totalCash = 0;
+                Sort();
                 for (int i = 0; i < Gift_List.Count; i++)
                 {
                     str += "품번 : " + Gift_List[i].Idx + " / 품명 : " + Gift_List[i].Product_Name + " / 옵션 : " + Gift_List[i].Product_Option + " / 수량 : " + Gift_List[i].Count + "\n";
@@ -83,5 +84,19 @@ public class SendMail : UIBaseButton
         {
             Gift_List.Add((Product)data.Clone());
         }
+    }
+
+    void Sort()
+    {
+        Gift_List.Sort((char1, char2) =>
+        {
+            var check1 = char1;
+            var check2 = char2;
+
+            int value = 0;
+
+            value = check1.Idx.CompareTo(check2.Idx);
+            return value;
+        });
     }
 }
